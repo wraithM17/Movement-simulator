@@ -1,0 +1,21 @@
+body {
+	margin:0;
+	padding:0;
+	background-color: #333;
+}
+
+
+#main {
+	height:100vh;
+	width:100vw;
+	border:2px solid white;
+}
+
+.entity {
+	height:2rem;
+	width:2rem;
+	position:absolute;
+	top:200px;
+	left:150px;
+	background-color: white;
+}
