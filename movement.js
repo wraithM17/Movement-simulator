@@ -21,15 +21,18 @@ function mouse_coords(event){
 
 
 function track(x,y){
+	x -= 15;
+	y -= 15;
 	//ENTITY.style.left = x;
 	//ENTITY.style.top = y;
 	//ENTITY.style.backgroundColor = random_color();
-	$("#display_coords").html(`X : ${x} &nbsp;&nbsp;&nbsp;Y : ${y}`);
+	
 	path(x,y);
 }
 
 function path(x,y){
 	moving = true;
+
 	let move_x = setInterval(function(){
 		if (entity_x != x){
 			if (entity_x > x){
@@ -40,6 +43,7 @@ function path(x,y){
 
 			}
 		}
+		$("#display_coords").html(`X : ${entity_x} &nbsp;&nbsp;&nbsp;Y : ${entity_y}`);
 		if (entity_x == x){
 			clearInterval(move_x);
 			let move_y = setInterval(function(){
@@ -52,16 +56,19 @@ function path(x,y){
 						entity_y += 1;
 					}
 				}
+
 				else if (entity_y == y){
 					clearInterval(move_y);
 					moving = false;
 					console.log("Static now.");
 				}
+				$("#display_coords").html(`X : ${entity_x} &nbsp;&nbsp;&nbsp;Y : ${entity_y}`);
 				ENTITY.style.top = entity_y;
 			},5);
 		}
 		ENTITY.style.left = entity_x;
 	},5);
+
 
 }
 
