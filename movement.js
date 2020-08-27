@@ -5,6 +5,7 @@ var moving = false;
 var short_move;
 var move_x;
 var move_y;
+var allowed_blobs_num = 10;
 
 
 
@@ -12,13 +13,18 @@ var move_y;
 
 function mouse_coords(event){
 	if (moving){
-
+		clearInterval(short_move);
+		if (move_x){
+			clearInterval(move_x);
+		}
+		if (move_y){
+			clearInterval(move_y);
+		}
 
 	}
 
 
-	if (!moving){
-		console.log("Moving now.");
+	
 	var x = event.clientX;
 	var y = event.clientY;
 
@@ -27,7 +33,6 @@ function mouse_coords(event){
 
 	track(x,y)
 
-	}
 
 }
 
@@ -36,6 +41,7 @@ function track(x,y){
 	x -= 15;
 	y -= 15;
 	shortest_path(x,y);
+
 }
 
 
@@ -43,7 +49,7 @@ function track(x,y){
 function path(x,y){
 	moving = true;
 
-	let move_x = setInterval(function(){
+	move_x = setInterval(function(){
 		if (entity_x != x){
 			if (entity_x > x){
 				entity_x -= 1;
@@ -53,10 +59,10 @@ function path(x,y){
 
 			}
 		}
-		$("#display_coords").html(`X : ${entity_x} &nbsp;&nbsp;&nbsp;Y : ${entity_y}`);
+		$("#display_coords").html(`X : ${entity_x+15} &nbsp;&nbsp;&nbsp;Y : ${entity_y+15}`);
 		if (entity_x == x){
 			clearInterval(move_x);
-			let move_y = setInterval(function(){
+			move_y = setInterval(function(){
 				if (entity_y != y){
 					if (entity_y > y){
 						entity_y -= 1;
@@ -70,9 +76,8 @@ function path(x,y){
 				else if (entity_y == y){
 					clearInterval(move_y);
 					moving = false;
-					console.log("Static now.");
 				}
-				$("#display_coords").html(`X : ${entity_x} &nbsp;&nbsp;&nbsp;Y : ${entity_y}`);
+				$("#display_coords").html(`X : ${entity_x+15} &nbsp;&nbsp;&nbsp;Y : ${entity_y+15}`);
 				ENTITY.style.top = entity_y;
 			},5);
 		}
@@ -86,15 +91,14 @@ function path(x,y){
 // my maths , my country , my planet for making this function
 // possible
 function shortest_path(x,y){
-	console.log(`X : ${x}   Y : ${y}`);
 	moving = true;
 	x_diff = Math.abs(entity_x-x);
 	y_diff = Math.abs(entity_y-y);
 
 	
 	if (x_diff > y_diff){
-		let short_move = setInterval(function(){
-			$("#display_coords").html(`X : ${entity_x} &nbsp;&nbsp;&nbsp;Y : ${entity_y}`);
+		short_move = setInterval(function(){
+			$("#display_coords").html(`X : ${entity_x+15} &nbsp;&nbsp;&nbsp;Y : ${entity_y+15}`);
 			if (entity_y != y){
 				if (entity_y > y){
 					entity_y -= 1;
@@ -121,8 +125,8 @@ function shortest_path(x,y){
 
 				clearInterval(short_move);
 				
-				let move_x = setInterval(function(){
-					$("#display_coords").html(`X : ${entity_x} &nbsp;&nbsp;&nbsp;Y : ${entity_y}`);
+				move_x = setInterval(function(){
+					$("#display_coords").html(`X : ${entity_x+15} &nbsp;&nbsp;&nbsp;Y : ${entity_y+15}`);
 					if (entity_x != x){
 						if (entity_x > x){
 							entity_x -= 1;
@@ -151,8 +155,8 @@ function shortest_path(x,y){
 	}
 	else {
 
-		let short_move = setInterval(function(){
-			$("#display_coords").html(`X : ${entity_x} &nbsp;&nbsp;&nbsp;Y : ${entity_y}`);
+		short_move = setInterval(function(){
+			$("#display_coords").html(`X : ${entity_x+15} &nbsp;&nbsp;&nbsp;Y : ${entity_y+15}`);
 			if (entity_x != x){
 				if (entity_x > x){
 					entity_x -= 1;
@@ -179,8 +183,8 @@ function shortest_path(x,y){
 
 				clearInterval(short_move);
 				
-				let move_y = setInterval(function(){
-					$("#display_coords").html(`X : ${entity_x} &nbsp;&nbsp;&nbsp;Y : ${entity_y}`);
+				move_y = setInterval(function(){
+					$("#display_coords").html(`X : ${entity_x+15} &nbsp;&nbsp;&nbsp;Y : ${entity_y+15}`);
 
 					if (entity_y != y){
 						if (entity_y > y){
@@ -211,6 +215,16 @@ function shortest_path(x,y){
 	}
 
 
+}
+
+
+function load_blobs(){
+
+	var total_blobs = $(".blob").length;
+	for (i=0;total_blobs!=allowed_blobs_num;i++){
+		generate_blob();
+		total_blobs = $(".blob").length;
+	}
 
 
 }
@@ -220,8 +234,45 @@ function shortest_path(x,y){
 
 
 
-function main(){
 
+
+function generate_blob(){
+
+	let rand_x = randint(0,90);
+	let rand_y = randint(0,90);
+	let dim = randint(10,20);
+	let blob_id = `${randint(0,10000)}${randint(0,10000)}`;
+
+
+	let blob = `<span onclick = "detect_blob(this)" class="blob" 
+	id="blob-${blob_id}"></span>`;
+	
+
+	$("#main").append(blob);
+	$(`#blob-${blob_id}`).css("left",`${rand_x}vw`);
+	$(`#blob-${blob_id}`).css("top",`${rand_y}vh`);
+	$(`#blob-${blob_id}`).css("width",`${dim}px`);
+	$(`#blob-${blob_id}`).css("height",`${dim}px`);
+
+	
+
+}
+
+
+
+function detect_blob(blob){
+
+	console.log("Detecting...");
+	console.log(blob.style.left);
+	
+
+}
+
+
+
+
+function main(){
+	setInterval(load_blobs,2000);
 }
 
 
