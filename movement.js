@@ -7,6 +7,7 @@ var move_x;
 var move_y;
 var allowed_blobs_num = 10;
 var blob_coords = [];
+var points = 0;
 
 
 
@@ -198,7 +199,7 @@ function generate_blob(){
 
 	let rand_x = randint(0,90);
 	let rand_y = randint(0,90);
-	let dim = randint(10,20);
+	let dim = randint(15,20);
 	let blob_id = `${randint(0,10000)}${randint(0,10000)}`;
 
 
@@ -214,8 +215,11 @@ function generate_blob(){
 	$(`#blob-${blob_id}`).css("height",`${dim}px`);
 
 	let blob_obj = document.getElementById(`blob-${blob_id}`);
-	let blob_x = blob_obj.offsetLeft;
-	let blob_y = blob_obj.offsetTop;
+	let blob_dim = blob_obj.offsetHeight; // same is width
+	let blob_x = blob_obj.offsetLeft-(blob_dim/2);
+	let blob_y = blob_obj.offsetTop-(blob_dim/2);
+	
+
 
 	blob_coords.push(`${blob_x}-${blob_y}-${blob_id}`);
 
@@ -223,7 +227,6 @@ function generate_blob(){
 
 
 
-//100 milliseconds or 0.1 second
 
 function game_tick(){
 
@@ -238,7 +241,7 @@ function game_tick(){
 
 			var x_estimate = Math.abs(blob_x_coord - entity_x);
 			var y_estimate = Math.abs(blob_y_coord - entity_y);
-			if (x_estimate < 10 && y_estimate < 10){
+			if (x_estimate < 15 && y_estimate < 15){
 				blob_collision(select_blob_id,x);
 				console.log("hmm");
 					
@@ -247,7 +250,7 @@ function game_tick(){
 		}
 
 
-	,334);
+	,200);
 
 
 }
@@ -262,16 +265,29 @@ function blob_collision(blob_id,index){
 	var current_blob = document.getElementById(`blob-${blob_id}`);
 	current_blob.remove();
 	blob_coords.splice(index, 1);
-	console.log(blob_coords);
+	entity_eat();
+	point();
+
+
+}
+
+
+function point(){
+	points += 1;
+	$("#points").text(points);
+
+}
+
+function entity_eat(){
+
+	//will work on it
 
 }
 
 
 
-
-
 function main(){
-	setInterval(load_blobs,300);
+	setInterval(load_blobs,500);
 	game_tick();
 }
 
