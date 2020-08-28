@@ -6,7 +6,7 @@ var short_move;
 var move_x;
 var move_y;
 var allowed_blobs_num = 10;
-
+var blob_coords = [];
 
 
 
@@ -44,48 +44,6 @@ function track(x,y){
 
 }
 
-
-// LONG PATH FUNCTION OBSOLETE NOW RIP ----!----
-function path(x,y){
-	moving = true;
-
-	move_x = setInterval(function(){
-		if (entity_x != x){
-			if (entity_x > x){
-				entity_x -= 1;
-			}
-			else if (entity_x < x){
-				entity_x += 1;
-
-			}
-		}
-		$("#display_coords").html(`X : ${entity_x+15} &nbsp;&nbsp;&nbsp;Y : ${entity_y+15}`);
-		if (entity_x == x){
-			clearInterval(move_x);
-			move_y = setInterval(function(){
-				if (entity_y != y){
-					if (entity_y > y){
-						entity_y -= 1;
-
-					}
-					else if (entity_y < y){
-						entity_y += 1;
-					}
-				}
-
-				else if (entity_y == y){
-					clearInterval(move_y);
-					moving = false;
-				}
-				$("#display_coords").html(`X : ${entity_x+15} &nbsp;&nbsp;&nbsp;Y : ${entity_y+15}`);
-				ENTITY.style.top = entity_y;
-			},5);
-		}
-		ENTITY.style.left = entity_x;
-	},5);
-
-
-}
 
 // I would like to thank my friends, my family , my braincells ,
 // my maths , my country , my planet for making this function
@@ -244,8 +202,9 @@ function generate_blob(){
 	let blob_id = `${randint(0,10000)}${randint(0,10000)}`;
 
 
-	let blob = `<span onclick = "detect_blob(this)" class="blob" 
+	let blob = `<span class="blob" 
 	id="blob-${blob_id}"></span>`;
+	
 	
 
 	$("#main").append(blob);
@@ -254,25 +213,66 @@ function generate_blob(){
 	$(`#blob-${blob_id}`).css("width",`${dim}px`);
 	$(`#blob-${blob_id}`).css("height",`${dim}px`);
 
-	
+	let blob_obj = document.getElementById(`blob-${blob_id}`);
+	let blob_x = blob_obj.offsetLeft;
+	let blob_y = blob_obj.offsetTop;
+
+	blob_coords.push(`${blob_x}-${blob_y}-${blob_id}`);
 
 }
 
 
 
-function detect_blob(blob){
+//100 milliseconds or 0.1 second
 
-	console.log("Detecting...");
-	console.log(blob.style.left);
-	
+function game_tick(){
+
+	var tick = setInterval(function(){
+
+		for (var x=0;x!=blob_coords.length;x++){
+			let blob_data = blob_coords[x].split("-");
+			var blob_x_coord  = blob_data[0];
+			var blob_y_coord  = blob_data[1];
+			var select_blob_id = blob_data[2];
+
+
+			var x_estimate = Math.abs(blob_x_coord - entity_x);
+			var y_estimate = Math.abs(blob_y_coord - entity_y);
+			if (x_estimate < 10 && y_estimate < 10){
+				blob_collision(select_blob_id,x);
+				console.log("hmm");
+					
+				}
+			}
+		}
+
+
+	,334);
+
 
 }
+
+
+
+
+
+
+function blob_collision(blob_id,index){
+
+	var current_blob = document.getElementById(`blob-${blob_id}`);
+	current_blob.remove();
+	blob_coords.splice(index, 1);
+	console.log(blob_coords);
+
+}
+
 
 
 
 
 function main(){
-	setInterval(load_blobs,2000);
+	setInterval(load_blobs,300);
+	game_tick();
 }
 
 
