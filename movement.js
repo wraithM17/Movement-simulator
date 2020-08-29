@@ -2,6 +2,13 @@ var entity_x = 200;
 var entity_y = 150;
 var ENTITY = document.getElementById("entity");
 var moving = false;
+
+var enemy_x = 100;
+var enemy_y = 100;
+var ENEMY = document.getElementById("enemy");
+
+
+
 var short_move;
 var move_x;
 var move_y;
@@ -9,8 +16,8 @@ var allowed_blobs_num = 10;
 var blob_coords = [];
 var points = 0;
 
-
-
+var client_height = $(window).height();
+var client_width = $(window).width();
 
 function mouse_coords(event){
 	if (moving){
@@ -177,6 +184,143 @@ function shortest_path(x,y){
 }
 
 
+
+
+// random movement
+function enemy_movement(rnum=false){
+
+	if (rnum == false){
+		var rnum = randint(1,4);
+	}
+
+
+
+
+
+	if (rnum == 1){
+
+		var times = randint(50,500);
+		var counter = 0;
+		console.log(`distance ---> ${times}px north`);
+		var enemy_move_up = setInterval(function(){
+			counter += 2;
+			if (counter == times){
+				clearInterval(enemy_move_up);
+				enemy_movement();
+			}
+			else if (enemy_y > 25){
+				enemy_y -= 2;	
+			}
+			else {
+				clearInterval(enemy_move_up);
+				enemy_movement();
+			}
+			
+			ENEMY.style.top = enemy_y;
+		},3)
+
+	}
+
+	if (rnum == 2){
+
+		var times = randint(50,500);
+		var counter = 0;
+
+		console.log(`distance ---> ${times}px south`);
+		var enemy_move_down = setInterval(function(){
+			counter += 2;
+			if (counter == times){
+				clearInterval(enemy_move_down);
+				enemy_movement();
+			}
+
+			else if (enemy_y < (client_height-35)){
+				enemy_y += 2;
+			}
+			else {
+				clearInterval(enemy_move_down);
+				enemy_movement();
+			}
+
+
+			ENEMY.style.top = enemy_y;
+		},3)
+
+	}
+
+	if (rnum == 3){
+
+		var times = randint(50,500);
+		var counter = 0;
+		console.log(`distance ---> ${times}px left`);
+		var enemy_move_left = setInterval(function(){
+			counter += 2;
+			if (counter == times){
+				clearInterval(enemy_move_left);
+				enemy_movement();
+			}
+			else if (enemy_x > 25){
+				enemy_x -= 2;	
+			}
+
+			else {
+				clearInterval(enemy_move_left);
+				enemy_movement();
+			}
+
+			
+			ENEMY.style.left = enemy_x;
+		},3)
+
+
+
+	}
+
+
+	if (rnum == 4){
+
+		var times = randint(50,500);
+		var counter = 2;
+		console.log(`distance ---> ${times}px right`);
+		var enemy_move_right = setInterval(function(){
+			counter += 2;
+			if (counter == times){
+				clearInterval(enemy_move_right);
+				enemy_movement();
+			}
+			else if (enemy_x < (client_width-35)){
+				enemy_x += 2;	
+			}
+
+			else {
+				clearInterval(enemy_move_right);
+				enemy_movement();
+			}
+
+			
+			ENEMY.style.left = enemy_x;
+		},3)
+
+
+
+	}
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 function load_blobs(){
 
 	var total_blobs = $(".blob").length;
@@ -241,7 +385,7 @@ function game_tick(){
 
 			var x_estimate = Math.abs(blob_x_coord - entity_x);
 			var y_estimate = Math.abs(blob_y_coord - entity_y);
-			if (x_estimate < 15 && y_estimate < 15){
+			if (x_estimate < 25 && y_estimate < 25){
 				blob_collision(select_blob_id,x);
 				console.log("hmm");
 					
@@ -289,6 +433,7 @@ function entity_eat(){
 function main(){
 	setInterval(load_blobs,500);
 	game_tick();
+	enemy_movement();
 }
 
 
