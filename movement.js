@@ -18,6 +18,8 @@ var points = 0;
 
 var client_height = $(window).height();
 var client_width = $(window).width();
+var tick;
+var blob_loading;
 
 function mouse_coords(event){
 	if (moving){
@@ -189,6 +191,37 @@ function shortest_path(x,y){
 // random movement
 function enemy_movement(rnum=false){
 
+	if (rnum == "clear"){
+		console.log("cls");
+		if (enemy_move_up){
+			clearInterval(enemy_move_up)
+		}
+		else if (enemy_move_down){
+			clearInterval(enemy_move_down)
+		}
+		else if (enemy_move_left){
+			clearInterval(enemy_move_left)
+		}
+		else if (enemy_move_right){
+			clearInterval(enemy_move_left)
+		}
+		else if (enemy_move_up_right){
+			clearInterval(enemy_move_up_right)
+		}
+		else if (enemy_move_up_left){
+			clearInterval(enemy_move_up_left)
+		}
+		else if (enemy_move_down_right){
+			clearInterval(enemy_move_down_right)
+		}
+		else if (enemy_move_down_left){
+			clearInterval(enemy_move_down_left)
+		}
+
+	}
+
+
+
 	if (rnum == false){
 		var rnum = randint(1,8);
 	}
@@ -211,8 +244,8 @@ function enemy_movement(rnum=false){
 				enemy_y -= 2;	
 			}
 			else {
-				clearInterval(enemy_move_up);
-				enemy_movement();
+				enemy_y = client_height - 35;
+
 			}
 			
 			ENEMY.style.top = enemy_y;
@@ -237,8 +270,7 @@ function enemy_movement(rnum=false){
 				enemy_y += 2;
 			}
 			else {
-				clearInterval(enemy_move_down);
-				enemy_movement();
+				enemy_y = 25;
 			}
 
 
@@ -262,8 +294,7 @@ function enemy_movement(rnum=false){
 			}
 
 			else {
-				clearInterval(enemy_move_left);
-				enemy_movement();
+				enemy_x = client_width-35;
 			}
 
 			
@@ -290,8 +321,7 @@ function enemy_movement(rnum=false){
 			}
 
 			else {
-				clearInterval(enemy_move_right);
-				enemy_movement();
+				enemy_x = 25;
 			}
 
 			
@@ -487,7 +517,8 @@ function generate_blob(){
 
 function game_tick(){
 
-	var tick = setInterval(function(){
+	tick = setInterval(function(){
+		enemy_blob_check();
 
 		for (var x=0;x!=blob_coords.length;x++){
 			let blob_data = blob_coords[x].split("-");
@@ -500,7 +531,7 @@ function game_tick(){
 			var y_estimate = Math.abs(blob_y_coord - entity_y);
 			if (x_estimate < 25 && y_estimate < 25){
 				blob_collision(select_blob_id,x);
-				console.log("hmm");
+			
 					
 				}
 			}
@@ -535,16 +566,46 @@ function point(){
 
 }
 
+
+function enemy_blob_check(){
+
+	var pos_x_diff = Math.abs(enemy_x-entity_x);
+	var pos_y_diff = Math.abs(enemy_y-entity_y);
+
+	if (pos_x_diff < 25 && pos_y_diff < 25){
+
+		
+		clearInterval(tick);
+		clearInterval(blob_loading);
+		enemy_movement("clear");
+		lose();
+
+
+	}
+
+
+
+
+}
+
+
+
+
 function entity_eat(){
 
 	//will work on it
 
 }
 
+function lose(){
+	document.write("The enemy blob ate you.")
+
+}
+
 
 
 function main(){
-	setInterval(load_blobs,500);
+	blob_loading = setInterval(load_blobs,500);
 	game_tick();
 	enemy_movement();
 }
